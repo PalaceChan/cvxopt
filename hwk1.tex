@@ -1,0 +1,76 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 2}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[2.5]
+  To get the distance between hyperplanes $\{x \in \mathbb{R}^n | a^T x = b_1 \}$ and $\{x \in \mathbb{R}^n | a^T x = b_2 \}$ consider a point on each ($x_1$ and $x_2$) and note that $x_2 - x_1 = ka$ for some $k \in \mathbb{R}$. So:
+  
+  \begin{alignat*}{2}
+    & & a^T(x_2 - x_1) & = ||a||^2 \\
+    \implies & & k & = \frac{(b_2 - b_1)}{||a||^2} \\
+    \implies & &||x_2 - x_1|| & = \frac{|b_2 - b_1|||a||}{||a||^2} \\
+    & &                      & = \frac{|b_2 - b_1|}{||a||} \\
+  \end{alignat*}
+\item[2.7]
+  The set $\{x | ||x - a||_2 \leq ||x - b||_2\}$ is a half-space, to find the equation describing it in the form $a^Tx \leq b$ we know the normal vector is $b - a$ and that the hyperplane passes through the midpoint between $a$ and $b$ which is $(b+a)/2$. Substituting that in, we see that
+
+  \[
+    \frac{1}{2} (b-a^T)(b+a) = \frac{||b||^2 - ||a||^2}{2}
+  \]
+
+  which implies the hyperplane equation is
+  
+  \[
+    2(b-a^T)x \leq ||b||^2 - ||a||^2
+  \]  
+
+\item[2.12]
+  \begin{itemize}
+  \item[a] A slab $\{x \in \mathbb{R}^n | \alpha \leq a^T x \leq \beta\}$ is convex because it is the intersection of two hyperplanes
+  \item[b] A rectangle is convex for the same reason
+  \item[c] A wedge is convex for the same reason
+  \item[d] The set of points closer to a given point than a given set is convex for the same reason (but with infinite intersection)
+  \item[e] The set of points closer to one set than another is not, a counterexample would be two concentric rings
+  \item[f] The set $S := \{x | x + S_2 \subseteq S_1 \}$ where $S_1$ is convex. To see this, consider two arbitrary points in that set $x_1, x_2$. Consider their convex combination $\theta x_1 + (1-\theta) x_2$. If we offset it by an arbitrary element of $S_2$ 
+    we get $s + \theta x_1 + (1-\theta) x_2$, but this is the same as $\theta (s + x_1) + (1-\theta) (s + x_2)$ and this convex combination is of points in $S_1$, and so is also in $S_1$. This shows $S$ is convex
+  \item[g] The set of points whose distance to $a$ does not exceed a fixed fraction $\theta$ of the distance to $b$ is convex as it is ball when $\theta < 1$.
+  \end{itemize}
+
+\item[2.15]
+  \begin{itemize}
+  \item[a] $\alpha \leq \mathbb{E} f(x) \leq \beta$ is just a linear inequality in $p_i$ so is convex.
+  \item[b] $\bf{prob}(x > \alpha) \leq \beta$ is also that
+  \item[c] $\mathbb{E} |x^3| \leq \alpha \mathbb{E}|x|$ is also that
+  \item[d] $\mathbb{E} x^2 \leq \alpha$ is also that
+  \item[e] $\mathbb{E} x^2 \geq \alpha$ is also that
+  \item[f] $\bf{var}(x) \leq \alpha$ is not convex, an easy counterexample is two points with $p_i$ respectively ${0,1}$ and ${1,0}$ both of which have variance $0$ while the convex combination of those probabilities has positive variance
+  \item[g] $\bf{var}(x) \geq \alpha$ is convex by exercise 2.10 since
+    \[
+      \bf{var}(x) = \mathbb{E} x^2 - (\mathbb{E} x)^2 = \sum p_i a_i^2 - \( \sum p_i a_i \)^2 = b^T p - p^T a a^T p
+    \]
+    (with $b_i = a_i^2$ and $aa^T$ positive semidefinite
+  \item[h] $\bf{quartile}(x) \geq \alpha$ is convex as it is in the form of a halfspace inequality
+  \item[i] $\bf{quartile}(x) \leq \alpha$ is convex for the same reason
+  \end{itemize}
+
+\item[2.28]
+  Matrix entries must satisfy that every principal submatrix (not only leading ones) have nonnegative determinant in order to be positive semidefinite. This establishes all constraints on their entries for this exercise
+
+\item[A1.7]
+  \begin{itemize}
+  \item[a] The dual cone of $K = {0}$ is clearly $\matbb{R}^2$
+  \item[b] The dual cone of $K = \mathbb{R}^2$ is clearly ${0}$
+  \item[c] The dual cone of $K = \{(x_1, x_2) | |x_1| \leq x_2 \}$ is itself. Suppose without loss of generality that $y_1 > y_2$ and consider $y^T x$. If one takes $x_1 = x_2$ with $x_1 < 0$ we see such $y$ cannot like in $K^*$
+    \item[d] The dual cone of $K = \{(x_1,x_2) | x_1 + x_2 = 0\}$ is the orthogonal to the line $x_1 - x_2$ describing $K$
+  \end{itemize}
+\end{itemize}
+\end{document}
