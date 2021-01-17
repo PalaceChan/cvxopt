@@ -1,0 +1,152 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 3}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[3.2]
+  \begin{itemize}
+  \item[a] The level sets shown could clearly be quasiconvex based on the (sub) level sets, the superlevel sets have holes so it can be neither quasiconcave nor the stronger concave. Harder to see, but near the right corner of the inner oval, a line intersecting the level sets appears to violate convexity so we also rule out convex.
+  \item[b] The second set of level sets could be concave (thus) quasiconcave from the outward decreasing level sets. Though cannot be convex (or quasiconvex) from the level sets (bit harder to see)
+  \end{itemize}
+
+\item[3.6]
+  \begin{itemize}
+  \item[a] The epigraph of a function is a halfspace when the function is affine
+  \item[b] It is a convex cone when convex and positively homogeneous. The direction convex and positively homogeneous implies convex cone epigraph is easy to see (pull out and cancel the $\alpha$ to see that $(x,t) \in \bf{epi} f \implies (\alpha x, \alpha t) \in \bf{epi} f$). Convex epigraph by definition (level sets) implies the function is convex. Bit less clear to see the cone property implying the positive homogeneous, but as the epigraph is a cone and $f$ is an edge of the cone, the ray spanned from $\alpha f(x)$ must intersect $f(\alpha x)$, as it cannot be strictly less than it (else it would fall out of the epigraph) and it must be $\leq$ to it by convexity.
+    
+  \item[c] The epigraph of a function is a polyhedron iff $f$ is convex and piecewise affine. This can be seen because the epigraph is by definition the convex intersection of hyperplanes and its convexity implies that of $f$.
+  \end{itemize}
+
+\item[3.16] Determine whether convex, concave, quasiconvex, or quasiconcave for each of the following:
+  \begin{itemize}
+  \item[a] $e^x - 1$ is convex so also quasiconvex, as $-f(x)$ is also nonincreasing in $R$ it is quasiconcave.
+  \item[b] for $f(x_1, x_2) = x_1 x_2$ on $\mathbb{R}_{++}^2$ we compute the hessian to get
+    $$
+    \nabla^2 f = \begin{bmatrix}
+      0 & 1 \\
+      1 & 0
+      \end{bmatrix}
+    $$
+    which is indefinite so $f$ is neither convex nor concave. It is also quasiconcave because ${(x_1, x_2) \in \mathbb{R}_{++}^2 | x_1 x_2 \geq \alpha}$ is convex 
+  \item[c] For $1 / (x_1 x_2)$ we also compute the hessian and get
+    $$
+    \nabla^2 f = \begin{bmatrix}
+      2 x_2^{-1} x_1^{-3} & x_1^{-2} x_2^{-2} \\
+      x_1^{-2} x_2^{-2} & 2 x_1^{-1} x_2^{-3}
+      \end{bmatrix} = \frac{1}{x_1 x_2} \begin{bmatrix}
+      2 x_1^2 & x_1^{-1}x_2^{-1} \\
+      x_1^{-1}x_2^{-1} & 2 x_2^{-2}
+      \end{bmatrix}
+      $$
+      The latter matrix is positive semidefinite by Sylvester's criterion because the leading minor is clearly positive in the domain, and the determinant is $3 x_1^{-2} x_2^{-2}$ which is also positive. 
+    \item[d] $x_1 / x_2$ on $\mathbb{R}_{++}^2$ has Hessian
+      $$
+      \nabla^2 f = \begin{bmatrix}
+        0 & -x_2^{-2} \\
+        -x_2^{-2} & 2 x_1 x_2^{-3}
+      \end{bmatrix} = x_2^{-2} \begin{bmatrix}
+        0 & -1 \\
+        -1 & 2 x_1 / x_2
+      \end{bmatrix}
+      $$
+      but the latter is indefinite so $f$ is neither convex nor concave. The superlevel and sublevel sets are hyperplanes so $f$ is quasilinear
+    \item[e] $x_1^2 / x_2$ on $\mathbb{R} \times \mathbb{R}_{++}$ has the following hessian
+      $$
+      \nabla^2 f = \begin{bmatrix}
+        \frac{2}{x_2} & \frac{-2 x_1}{x_2^2} \\
+         \frac{-2 x_1}{x_2^2} &  \frac{2 x_1^2}{x_2^3}
+       \end{bmatrix} =
+       \frac{2}{x_2} \begin{bmatrix}
+        1 & \frac{-x_1}{x_2}\\
+         \frac{-x_1}{x_2} & \frac{x_1^2}{x_2^2}
+        \end{bmatrix} =
+      \frac{2}{x_2} \begin{bmatrix}
+        1 \\
+         \frac{-x_1}{x_2}
+        \end{bmatrix} \begin{bmatrix}
+        1 & \frac{-x_1}{x_2}
+        \end{bmatrix}
+        $$
+        and is therefore convex so also quasiconvex. Not concave, and also not quasiconcave from the superlevel sets
+      \item[f] $x_1^\alpha x_2^{1 - \alpha}$ for $0 \leq \alpha \leq 1$ on $\mathbb{R}_{++}^2$ is concave and quasiconcave from the Hessian. The nasty derivation of the Hessian follows:
+        \begin{alignat*}{1}
+          \nabla^2 f & =
+          \begin{bmatrix}
+            \alpha (\alpha - 1) x_1^{\alpha - 2}x_2^{1 - \alpha} & -\alpha (\alpha - 1) x_1^{\alpha - 1} x_2^{-\alpha} \\
+            -\alpha (\alpha - 1) x_2^{-\alpha} & \alpha (\alpha - 1) x_1^\alpha x_2^{-\alpha - 1}
+          \end{bmatrix}\\
+          & = -\alpha * (1-\alpha) x_1^{\alpha}x_2^{1-\alpha} \begin{bmatrix}
+            \frac{1}{x_1^2} & \frac{-1}{x_1x_2} \\
+            \frac{-1}{x_1x_2} & \frac{1}{x_2^2}
+          \end{bmatrix}\\
+          & = -\alpha * (1-\alpha) x_1^{\alpha}x_2^{1-\alpha} \begin{bmatrix}
+            \frac{1}{x_1} \\
+            \frac{-1}{x_2}
+          \end{bmatrix} \begin{bmatrix}
+            \frac{1}{x_1} & \frac{-1}{x_2}
+            \end{bmatrix}
+        \end{alignat*}
+        and this last matrix is negative semidefinite 
+  \end{itemize}
+\item[A2.2] Suppose
+  $$f(x) = h(g_1(x), g_2(x), \ldots, g_k(x))$$
+  where $h$ is convex, the $g_i$ are such that either $h$ is nondecreasing in the $i$-th argument and $g_i$ is convex, $h$ is nonincreasing in the $i$-th argument with $g_i$ concave, or $g_i$ is affine. This implies $f$ is convex. To show this, rearrange indices such that we first have all the affine $g_i$, then all the convex and last all the concaves.
+  Then let $z$ be a convex combination of $x$ and $y$ and observe that
+  \begin{alignat*}{1}
+    f(z) & = h(g_1(z),g_2(z), \ldots, g_k(z)) \\
+    & \leq h(\theta g_1(x) + (1-\theta) g_1(y), \ldots, \theta g_k(x) + (1 - \theta) g_k(y)) \\
+    & \leq \theta h(g_1(x), \ldots, g_k(x)) + (1-\theta) h(g_1(y), \ldots, g_k(y)) \\
+    & = \theta f(x) + (1-\theta) f(y)
+  \end{alignat*}
+  where the corresponding entry groups in the second line hold trivially for the affine case, because $h$ is nondecreasing when we have increased the argument (since the middle group is convex we increased the argument) for the middle case, and lastly because $h$ is nonincreasing and we have decreased the argument (since the last case is convex). The third line convexity of $h$.
+\item[3.39] Derive the conjugate for the following functions
+  \begin{itemize}
+  \item[a] $f(x) = \text{max}_i x_i$ on $\mathbb{R}^2$
+    The conjugate is
+    $$
+    f^*(y) = \text{sup}_{x} y^T x - f(x)
+    $$
+    for $y$ such that the supremum is finite. $y$ cannot have any component be negative, for in that case picking a negative number $t$ for that component of $x$ and $0$ for all else leaves $f^*(y) = |y_kt|$ whichs is not bounded above. Similar reasoning shows $y$ cannot have a component larger than $1$ and it cannot have components which sum between $0$ and $1$, leaving the conjugate to be of the form
+    $$
+    f^*(y) = \begin{cases}
+      0 & y \succeq 0, \bf{1}^T y = 1 \\
+      \infty & \text{otherwise}
+      \end{cases}
+    $$
+  \end{itemize}
+
+\item[3.5 (xtra)]  Here we show that the running average of a convex function is convex. i.e.
+  $$F(x) = \frac{1}{x} \int_0^x f(t) \mathrm{d}t$$
+  This is straightforward via the change of variables $u = t/x$ $(\mathrm{d}u = 1/x \mathrm{d}t)$ which turns the above into
+  $$
+  F(u) = \int_0^1 f(ux) \mathrm{d}u
+  $$
+  and this is convex because of convexity of $f$
+
+\item[3.22 (xtra)] Show that the following functions are convex
+  \begin{itemize}
+  \item[a] $f(x) = -\log (-\log ( \sum_i^m e^{a_i^T x + b_i}))$. To argue that this is convex observe that $\log \sum e^x$ is a convex function and in this case it is composed with an affine function of $x$ so is still convex. This makes the $-\log$ a concave function of which we take a nondecreasing concave function ($\log$) which preserves convexity. The final minus sign flips it to convex.
+  \item[b] $f(x, y, v) = - \sqrt{uv - x^Tx}$ can be argued convex by factoring out a $u$ to get $-\sqrt{u(v - x^Tx/u)}$ which is convex because $-\sqrt{x_1x_2}$ is convex on $\mathbb{R}_{++}^2$ and in this case the factored interior is positive, $u$ is concave, and $v - x^Tx/u$ is concave (since $x^Tx/u$ is convex by being the perspective function of a norm). Whence we have a concave function which is nondecreasing and whose components are concave yielding a concave function that we finally flip to convex with a minus sign.
+  \item[c] $-\log(uv - x^Tx)$ is a similar argument, rewrite it like this:
+    $$- \left[ \log(u) + \log ( v - x^Tx/u) \right]$$
+    and observe that inside the brackets we have the sum of two concave functions which is concave.    
+  \item[d] $f(x,t) = -(t^p - ||x||_p^p)^{1/p}$ with $p > 1$ and ${(x,t) | t > ||x||_p}$ is argued convex with the aid of knowing that $||x||_p^p / u^{p-1}$ is convex for $u > 0$ by factoring into
+    $$-\left[ t - \frac{||x||_p^p}{t^{p-1}}\right]^{1/p}t^{1-1/p}$$
+    and using the fact, proved earlier, that $-x^{1/p}y^{1-1/p}$ is convex. Essentially, note that the arguments are concave and the arguments are nonincreasing for the composition.
+  \item[e] $f(x,t) = -\log ( t^p - ||x||_p^p$ with domain as above follows using similar arguments, rewrite it as:
+    $$-\left[(p-1)\log(t) + \log \left( t - \frac{||x||_p^p}{t^{p-1}}\right)\right]$$
+    the first term in the sum is clearly concave, the second term is a non decreasing concave function of a concave function so also concave. The sum of the concave functions remains concave and we flip to convex.
+  \end{itemize}
+
+\item[3.29 (xtra)] Prove that a convex piecewise linear function is of the form $\max a_i^Tx + b_i$.
+  It suffices to show $a_i^T x + b_i \geq a_j^T x + b_j \forall j$ on the $i$-th region. Assume the contrary, then WLG we can assume there is a point $x_k$ in region $x_k$ and $j \neq k$ such that $a_k^T x_k + b_k < a_j^T x + b_j$. This is impossible, because the epigraph of the function (which is convex) is also convex (and the function comprises the edges of the half planes defining the polyhedron). More concretely, consider the line segment from $x_k$ to a point in the interior of the $i$-th region. As, by assumption that $f(x_k) < a_j^T x + b_j$ we know that this segment begins below $a_j^T x + b_j$ and intersects it. It therefore can never be above $f(x_k)$ on the $k$-th region which contradicts the convexity of the epigraph.
+\end{itemize}
+\end{document}
