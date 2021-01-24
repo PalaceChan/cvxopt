@@ -1,0 +1,142 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 4}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[4.1]
+  Optimization problem $f_0(x_1, x_2)$ subject to
+  $$ 2x_1 + x_2 \geq 1$$
+  $$ x_1 + 3x_2 \geq 1$$
+  $$ x_1 \geq 0, x_2 \geq 0$$    
+  The shape of the constraint space is an unbounded (above) polyhedron.
+  \begin{itemize}
+    \item[a] For $f_0 = x_1 + x_2$  the solution is the corner at which the two lines intersect, solving for that we get $(2/5, 1/5)$
+    \item[b] For $f_0 = -x_1 - x_2$, it is unbounded below because the feasible set is unbounded above
+    \item[c] For $f_0 = x_1$ the solution $(0,1)$ is obvious
+    \item[d] For $f_0 = \max {x_1, x_2}$ we can start with $(2/5, 1/5)$ and walk along the boundary to see how much we can trade off $x_1$ and $x_2$. The first constraint penalizes $x_1$ harder so evaluating him on $2/5 - \epsilon$ shows that $x_2 \geq 1/5 + 2 \epsilon$. Plugging this bound into the second inequality and solving for $\epsilon$ shows $\epsilon = 1/15$ which leads to optimal point $x^* = (1/3, 1/3)$
+    \item[e] For $f_0 = x_1^2 + 9 x_2^2$ We do the same trick but as the second term is more harmful we plug in $1/5 - \epsilon$ and the implied $2/5 + 3 \epsilon$ (from the second inequality) to obtain
+      $$(2/5 + 3 \epsilon)^2 + 9 (1/5 - \epsilon)^2 = 18 \epsilon^2 - 6/5 \epsilon + 13/25$$
+      We can minimize the above over $\mathbb{R}$ by simply finding the critical point:
+      $$\nabla_\epsilon = 36 \epsilon - 6/5 = 0 \implies \epsilon = 6/5$$
+      So the optimal point is $(1/2, 1/6)$ with optimal value $1/2$
+  \end{itemize}
+
+\item[4.15] Here we consider the boolean LP $c^T x$ subject to $Ax \preceq b$ and $x_i \in {0,1}$ relaxed, however, to $0 \leq x_i \leq 1$
+  \begin{itemize}
+  \item[a] An optimal value for the relaxed problem is clearly a lower bound on the original problem (feasible set contains original feasible set)
+  \item[b] If the relaxed problem is not feasible, this implies the original feasible set is also the empty set and is thus not feasible
+  \item[c] If the relaxed problem has a boolean solution, this implies it is also optimal for the boolean problem (same argument as in a.)
+  \end{itemize}
+
+
+\item[4.2 (xtra)] Here we consider the problem
+  $$\text{minimize} f_0(x) = - \sum_{i=1}^m \log (b_i - a_i^T x)$$
+  \begin{itemize}
+  \item[a] Show $\bf{dom} f_0$ is unbounded iff $\exists v \neq 0$ with $Av \preceq 0$
+    \begin{itemize}
+    \item[i] Suppose unbounded, WLG we can assume $x_0$ is unbounded above. This implies
+      $$\begin{bmatrix}
+        A_0 & A_1 & \ldots & A_n
+      \end{bmatrix} x \preceq b \forall x$$
+      So in particular $A_0 x_0 \preceq b \forall x_0 \geq 0$  in this case let $v = (1, 0, \ldots 0)^T$ (-1 if we were arguing the unbounded below case), it must be the case that $Av \preceq 0$ since $b$ is finite
+    \item[ii] Now assume $\exists v \neq 0$ s.t. $Av \preceq 0$, then let $x = tv$ and we have $t Av \preceq b$ if we let $x \rightarrow \infty$ which establishes the unboundedness 
+    \end{itemize}
+  \item[b] $f_0$ is unbounded below iff $\exists v \neq 0$ with $Av \preceq 0$
+    \begin{itemize}
+    \item[i] If such a $v$ exists, just decouple that term from the summation in $f_0$ (i.e. on with $a_i^Tv < 0$) and note that $x_0 + tv$ must be in the domain due to convexity so that this term looks like
+      $$-\log (b_i - a_i^T x_0 -ta_j^Tv)$$
+      and that the third pieces is unbounded if we let $t \rightarrow \infty$ making $f_0$ unbounded below
+    \item[ii] Here take a sequence $x^k$ with $b - Ax^k \preceq 0$ and $f_0(x^k) \rightarrow - \infty$, and by convexity with the gradient we have
+      $$f_0(x^k) \geq f_0(x_0) + \sum_{i=1}^m \frac{1}{b_i - a_i^Tx_0} (x^k - x_0) = f_0(x_0) + \frac{a_i^Tx^k - a_iTx_0}{b_i - a_i^Tx_0}$$
+      Add and subtract $1$ to the righthandside like this
+      $$f_0(x_0) + m + \sum_{i=1}^m  \frac{a_i^Tx^k - a_iTx_0}{b_i - a_i^Tx_0} - \frac{b_i - a_i^Tx_0}{b_i - a_i^Tx_0}$$
+      which simplifies to
+      $$f_0(x_0) + m - \sum_{i=1}^m  \frac{b_i - a_iTx^k}{b_i - a_i^Tx_0}$$
+      For $f_0(x^k) \rightarrow -\infty$ we must have $\max b_i - a_i^T x^k \rightarrow \infty$
+      But if we suppose $\exists z \succ 0$ with $A^Tz = 0$ then $z^Tb$ is the same as $z^T(b - Ax^k)$ but this latter is bounded below by $\max_i b_i - a_i^Tx^k$ which $\rightarrow \infty$
+      concluding no such $z$ exists.
+    \end{itemize}
+  \item[c] Attaining the mimimum follows from sublevel sets of $f_0$ being closed.
+  \item[d] The constraint space is a polyhedron so either the optimal point is at an edge or a corner (which is affine).
+  \end{itemize}
+
+\item[4.5 (xtra)] Show equivalence of the following three problems:
+  1.
+  $$
+  \text{minimize} \sum_{i=1}^m \phi (a_i^Tx - b_i), \text{ where } \phi(u) = \begin{cases}
+    u^2 & |u| \leq M \\
+    M(2|u| - M) & |u| > M
+  \end{cases}
+  $$
+  2.
+  $$
+  \text{minimize} \sum_{i=1}^m (a_i^T - b_i)^2 / (w_i + 1) + M^2\bf{1}^Tw, \text{where } w \succeq 0
+  $$
+  3.
+  $$
+  \text{minimize} \sum_{i=1}^m (u_i^2 + 2Mv_i), \text{ where } \begin{cases}
+    -u - v \preceq Ax - b \preceq u + v \\
+    0 \preceq u \preceq M \bf{1} \\
+    v \succeq 0
+  \end{cases}
+  $$
+  \begin{itemize}
+    \item[1/2]
+  To see equivalence of the second problem to the first, minimize the second problem with respect to $w$ holding $x$ fixed first. We can limit attention to an individual $w_i$ as the minimization result is the same $\forall i$.
+  One component looks like
+  $$M^2 w_i + \frac{(a_i^Tx - b_i)^2}{w_i + 1}$$
+  and taking the derivative with respect to $w_i$ twice verifies convexity ($\nabla^2 = 2(a_i^Tx - b_i)^2 / (1+w_i)^3 \geq 0$), and solving $\nabla$ for a critical point shows that 
+  $$\nabla = M^2 - (a_i^Tx - b_i)^2 (1+w_i)^{-2} \implies (1+w_i)^2 = \frac{(a_i^Tx - b_i)^2}{M^2}$$
+ 
+
+  which implies that
+  $$
+  w_i = \begin{cases}
+    \frac{|a_i^Tx - b_i|}{M} - 1 & |a_i^Tx - b_i| > M \\
+    0 & |a_i^Tx - b_i| \leq M
+    \end{cases}
+  $$
+  
+  where the $0$ case above is due to constraint of $w \succeq 0$. Plugging this expression back into the objective for any term where $|u| \leq M$ is exactly as in the analogous term in problem 1
+  and when $|u| > M$ we get
+  $$M |a_i^Tx - b_i| + M|a_i^Tx - b_i| - M^2 = M(2|u| - M)$$
+  which matches the $\phi$ term in problem 1, this establishes the equivalence
+\item[1/3]
+  To see equivalence of the third problem to the first. Note the first contraint says $|a_i^Tx - b_i| \leq u+v$. Treat $v$ like the "slack" above $M$ when $u$ is $|a_i^Tx - b_i|$, i.e.
+  $$u = \begin{cases}
+    |a_i^Tx - b_i| & \text{if } |a_i^Tx - b_i| \leq M \\
+    M & \text{otherwise}
+  \end{cases}
+  $$
+  and
+  $$
+  v = \begin{cases}
+    0 & \text{if } |a_i^Tx - b_i| \leq M \\
+    |a_i^Tx - b_i| - M & \text{otherwise}
+  \end{cases}
+  $$
+  thus $|a_i^Tx - b_i| = u + v$ in all cases. When $v = 0$, the objective function term simplifies to the same as that in problem 1 (as $v = 0 \implies |a_i^Tx - b_i| \leq M$) and when $v \neq 0$ note that:
+  $$u_i^2 + 2Mv = M^2 + 2Mv = M(2*(M+v) - M)$$
+  (because $u$ is saturated at $M$)
+  and this matches what the analogous term would be in problem 1 due to the Huber penalty
+\end{itemize}
+
+\item[4.8 (xtra)] Give explicity solutions to these LPs
+  \begin{itemize}
+  \item[a] $c^Tx$ s.t. $Ax = b$. This would be at the intersection of the $Ax = b$ lines with $c^Tx$ which can be a point or a line. In the case of a point it would be $A^\dagger x$ more generally we would offset this by the null space of $A$
+  \item[b] $c^Tx$ over the halfspace $a^Tx \leq b$ must be optimal at the boundary so when $(a-c)^T x = 0$
+  \item[c] over the rectangle $l \preceq x \preceq u$ and $l \preceq u$ would need to be the corner of the rectangle in the $-c$ direction, so depending on the sign of $c$ pick $u$ or $l$ for each component
+  \item[d] over the probability simplex $1^T x = 1$ here just pick $1$ as the weight of $\min_i c_i$ or any mixture if multiple $c_i$ equal the min (geometrically the corner of the simplex or an edge along the simplex)
+  \end{itemize}
+
+  
+\end{itemize}
+\end{document}
