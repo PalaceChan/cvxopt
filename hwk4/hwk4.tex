@@ -1,0 +1,116 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 5}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[5.0] Consider the quadratic program, minimize $x_1^2 + 2x_2^2 - x_1x_2 - x_1$ subject to
+  $$x_1 + 2x_2 \leq u_1$$
+  $$x_1 - 4x_2 \leq u_2$$
+  $$x_1 + x_2 \geq -5$$
+
+  \begin{enumerate}
+  \item[a] Let $u_1 = -2, u_2 = -3$. We can rewrite this as
+    $$x^T P x + q^T x$$
+
+    where
+    $$P = \begin{bmatrix}
+      1 & -1/2 \\
+      -1/2 & 2
+    \end{bmatrix},
+    q = \begin{bmatrix}
+      -1 & 0
+    \end{bmatrix}
+    $$
+
+    and solve it with cvx (obtaining optimal value $8.22$ at $x^* = (-2.33,  0.17)$). The optimal dual values are $\lambda^* = (3.39, 2.44, 0)$.
+
+    We verify each of the KKT conditions hold for $x^* and \lambda^*$ in the script. In the case of the gradient condition, the gradient expression is
+    $$\begin{bmatrix}
+      2x_1 - x_2 - 1 \\
+      4x_2 - x_1
+    \end{bmatrix} + \begin{bmatrix}
+      1 & 1 & -1 \\
+      2 & -4 & -1
+    \end{bmatrix} \lambda^*$$
+
+  \item[b] Now consider perturbations of the form $u_1 = -2 + \delta_1$ and $u_2 = -3 + \delta_2$ for $\delta_1, \delta_2$ taking values in ${-0.1, 0, 0.1}$. For each we use the fact that $\lambda_i^* = - \partial p^*(0)/\partial u_i$ to obtain a predicted value (lower bound) for the perturbed optimal value and observe that entries $2,3,6,8$ in the perturbation results yield the smallest error in our prediction.
+  \end{enumerate}
+
+\item[5.1] Consider now the problem of minimizing $x^2 + 1$ subject to $(x-2)(x-4) \leq 0$ for $x \in \mathbb{R}$
+  \begin{enumerate}
+  \item[a] The constraint implies that $x \in [2, 4]$, from which we immediately deduce the optimal value to be $5$ at the left boundary.
+  \item[b] We plot the objective alongside the lagrangian for a few values of the multiplier in the R script.
+    The lagrangian is given by
+    $$L(x,\lambda) = (\lambda + 1)x^2 - 6 \lambda x + 8 \lambda + 1$$
+    The lagrange dual function is thus
+    $$g(\lambda) = \inf_x L(x, \lambda) = \frac{-9 \lambda^2}{\lambda + 1} + 8 \lambda + 1$$
+  \item[c] The dual problem is to maximize $g(\lambda)$ with $\lambda \geq 0$ and $g$ as above. It is convex so we can readily solve it by finding a critical point noting that
+    $$\nabla g(\lambda) = \frac{-\lambda^2 - 2 \lambda + 8}{(\lambda + 1)^2}$$
+    so the critical points are $-4$ and $2$, since $\lambda \geq 0$ this leaves us $\lambda = 2$ with dual optimal value of $5$.
+  \item[d] Now let $p^*(u)$ denote the optimal value when we perturb the constraint, i.e. $(x-2)(x-4) \leq u$. The plots as well as checking that $dp^*(0)/du = -\lambda = 2$ helps us conclude that
+    $$p^*(u) = \begin{cases}
+      \infty & u < -1 \\
+      11 + u - 6 \sqrt{1+u} & -1 \leq u \leq 8\\
+      1 & u \geq 8
+      \end{cases}$$
+    \end{enumerate}
+    
+  \item[5.4] Here we consider the boolean LP $c^T x$ subject to $Ax \preceq b$ and $x_i \in {0,1}$. Rather than relaxing the boolean condition to $0 \leq x_i \leq 1$ we now consider the ``Lagrangian relaxation'' $x_i (1-x_i) = 0$
+    \begin{enumerate}
+    \item[a] We derive the lagrange dual function as follows:
+      $$
+      \begin{alignat*}{1}
+          L(x, \mu, \nu) & = c^Tx + \mu^T (Ax - b) + \sum_i \nu_i x_i (1 - x_i) \\
+          & = -v^T x^Tx + (c + \nu + A^T\mu)^T x - \mu^Tb \\
+        \end{alignat*}
+        $$
+        therefore $(c + \nu + A^T\mu)^T$ must vanish so $c + A^T \mu \preceq 0$ (since $\nu \succeq 0$) or equivalently:
+      $$
+      \begin{alignat*}{1}
+          g(\mu, \nu) & = \inf_x L(x, \mu, \nu) \\
+          & = - \mu^Tb + \sum_i \min \{0, c_i + a_i^T \mu\}  \\
+        \end{alignat*}
+        $$
+      \item[b] Likewise we can derive the equivalent for the boolean LP relaxation:
+      $$
+      \begin{alignat*}{1}
+          L(x, \mu, v, w) & = c^Tx + \mu^T (Ax - b) - v^Tx + w^Tx - 1^Tw \\
+          & = -\mu^T b - 1^Tw + (c + A^T \mu + w - v)^Tx \\
+        \end{alignat*}
+        $$
+        so we must have that $A^T \mu - v + w + c = 0$, with $\mu \succeq 0, v \succeq 0, w \succeq 0$ and
+      $$
+      \begin{alignat*}{1}
+          g(\mu, v, w) & = \inf_x L(x, \mu, v, w) \\
+          & = -\mu^T b - 1^Tw \\
+        \end{alignat*}
+        $$
+        Note that since to maximize the above, $w$ must be $0$, which makes this problem equivalent to the previous lagrangian dual so both relaxations yield the same dual optimal
+    \end{enumerate}
+
+  \item[5.38] A collar with floor $F$, cap $C$, and initial underlying price $S_0$ has payoff:
+    $$
+    \begin{cases}
+      C - S_0 & S > C \\
+      S - S_0 & F \leq S \leq C \\
+      F - S_0 & S \leq F
+    \end{cases}
+    $$
+    Suppose the risk-free rate is $r = 1.05$, the price of the underlying at the start is $S_0$ (as well as the risk-free asset) and that 200 uniformly spaced between $0.5$ and $2$ equally probable values for $S$ are possible .
+    If we know a strike $1.1$ call is priced $0.06$, a call at $1.2$ is priced $0.03$, a put at $0.8$ is priced $0.02$ and a put at $0.7$ is priced $0.01$, we can infer bounds on the value of a collar with $F = 0.9$ and $C = 1.15$.
+
+    To do this note that there are 4 quoted options, the risk-free asset, the underlying, and the collar for a total of 7 investible assets. Let $x \in \mathbb{R}^7$ represent our investment across this universe. If $p^Tx < 0$ where $p$ is the vector of 6 known prices and one unknown price ($p_0$ of the collar) then arbitrage would occur if $Vx \succeq 0$ where each row of $V$ is a final possible price period. As this should be infeasible, Farkas lemma says that $\exists y \succeq 0$ such that
+    $$p = V^T y$$
+    we can minimize and maximize $p_0$ subject to the above in order to arrive at bounds for the collar's price. This gives us the following bounds and is computed in the python script
+    $$p_0 \in [0.033, 0.065]$$
+    
+  \end{itemize}
+\end{document}
