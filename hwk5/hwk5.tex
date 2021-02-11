@@ -1,0 +1,83 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 6}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[6.2] Given the norm approximation problem, minimize $||x \bf{1} - b||, x \in \mathbb{R}$, the solution is:
+  \begin{enumerate}
+  \item[a] median of the $b_i$ when $||.||$ is the $l_1$ norm. Intuitively this is the case because if $x$ is larger than half the components of $b$ and smaller than the other half, then $||x \bf{1} - b||_1$ becomes:
+    $$(|I| - |J|) x + \sum_{j \in J} b_j - \sum_{i \in I} b_i = \sum_{j \in J} b_j - \sum_{i \in I} b_i$$
+    where $J$ is the index for the elements of $b$ greater than $x$ and $I$ is the index of the elements in $b$ which are smaller than $x$.
+    Any point to the right of the median contributes a factor of $|I'| - |J'| > 0$ of $x$ while deficiting $\sum_{i \in I' \setminus I} b_i$ which is, by construction, smaller - thus net incrementing the norm value.
+    Any point to the right of the median deficits a factor of $|I'| - |J'| < 0$ of $x$ while contributing $\sum_{j \in J' \setminus J} b_j$ which is, by construction, bigger - thus net incrementing the norm value.
+    
+  \item[b] $\bar{b}$ when $||.||$ is the $l_2$ norm. This we can see by minimizing $\sum_i (x - b_i)^2$. $\nabla^2$ is $2nx$ where $n$ is the dimension of $b$ so we can minimize by finding the critical point.
+    This is given by solving for $\nabla = 0 \implies 2nx - 2 \sum b_i = 0 \implies x = \sum b_i / n$
+    
+  \item[c] $(\max{b} + \min{b})/2$ when $||.||$ is the $l_\infty$ norm (so midway between the two furthest points in $b$). Any other value would have bigger $l_\infty$ norm value due to whichever of the two extreme points it moved further from.
+  \end{enumerate}
+
+\item[Fitting with censored data]
+  When fitting the censored model
+  $$J = \sum_{k=1}^K \left( y^{(k)} - c^T x^{(k)} \right)^2$$
+
+  with only the first 25 of $K = 100$ entries known we can easily do this in R (see cens_fit.R) and obtain that
+
+  $$\frac{||c_{\text{true}} - \hat{c}_{\text{ls}}||_2}{||c_{\text{true}}||_2} = 0.3658459618$$
+
+  In order to optimally minimize this for the rest of the censored data we form the optimization problem in cens_fit.py, where we also solve for the censored values subject to them being above their known lower bound. This gives us:
+
+  $$\frac{||c_{\text{true}} - \hat{c}_{\text{opt}}||_2}{||c_{\text{true}}||_2} = 0.17521896070633883$$
+
+\item[Minimax rational fit to the exponential]
+  The general problem of fitting a minimax rational to a set of points looks like this
+  $$\text{minimize } \max_{i=1,\ldots,k} \left| \frac{p(t_i)}{q(t_i)} - y_i \right|$$
+  
+  where $p(t) = \sum_{i=0}^m a_i t^i$ and $q(t) = 1 + \sum_{i=1}^n b_i t^i$ on $D = {(a,b) \in \mathbb{R}^{m+1} \times \mathbb{R}^n | q(t) > 0, \alpha \leq t \leq \beta }$
+
+  Here we consider the case of $y_i = e^{t_i}$ where $t_i = -3 + 6(i-1)/(k-1)$ and $i = 1,\ldots,k=201$, and $m = n = 2$
+  The function $p(t_i) / q(t_i)$ is quasiconvex, to use the bisection method via feasibility of convex problems we note that
+
+  $$\left| \frac{p(t_i)}{q(t_i)} - y_i \right| \leq z \iff p(t_i) - q(t_i)(z+y_i) \leq 0 ,\text{ } q(t_i)(y_i - z) - p(t_i) \leq 0$$
+
+  thus we must iteratively solve a pair of convex feasibility problems for a binary search of $z$, this is done in minimax.py
+  and yields these estimates:
+
+  $$a = (1.00981654, 0.61228759, 0.11353546)$$
+  $$b = (-0.41444876,  0.04846235)$$
+  $$x^* = 0.02290274481261486$$
+
+  when $z = 0.022986072833848195$
+
+\item[Worst-case probability of loss]
+  Here we assume two gaussian investments $R_1$ and $R_2$ with known correlation, standard deviation, and mean returns. We dont make any assumptions on the joint distribution.
+  We can discretize the joint, and try to maximize probability of loss as long as the joint is consistent with the known data. Concretely, we know:
+
+  $$\mu_1 = 8, \mu_2 = 20, \sigma_1 = 6, \sigma_2 = 17.5, \rho = -0.25$$
+
+  We assume the returns can take on $100$ values uniformly between $-30$ and $+70$ each and the discretized marginals $p^{(1)}, p^{(2)}$ for $R_1, R_2$ are,
+
+  $$p_i^{(k)} = \bf{prob}(R_k = r_i) = \frac{\exp (-(r_i - \mu_k)^2 / (2 \sigma_k^2))}{\sum_{j=1}^n \exp (-(r_j - \mu_k)^2 / (2\sigma_k^2))}$$
+
+  We can view the joint distribution as a $100 \times 100$ matrix $X_{ij}$ ($R_1 \times R_2$) where the known discretized marginals effectively amount to knowing the rowsums and colsums.
+
+  The region of interest (where there is investment loss) in this matrix is given by ${i, j | i + j < 60}$ (zero-indexing), if $Y$ is the indicator matrix for this index, then:
+
+  $$p^{\text{loss}} = \sum_{i, j | i + j < 60} X_{ij} = \bf{tr}(X^TY)$$
+
+  where we have an $n$ equality constrains on $R_1$ of the form $\bf{1}^T X = p^{(1)}$, $n$ equality constraint on $R_2$ of the form $X \bf{1} = p^{(2)}$ and a constraint on the correlation captured by
+
+  $$\sum_{ij} (r_i - \mu_1)(r_j - \mu_2) X_{ij} = \rho \sigma_1 \sigma_2$$
+
+  the max probability of loss as solved in is $p^{\text{loss}} = 0.19202978771194032$
+  
+\end{itemize}
+\end{document}
