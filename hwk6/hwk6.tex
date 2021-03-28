@@ -1,0 +1,28 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 7}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[Maximum likelihood estimation of an increasing nonnegative signal]
+  Let $x(t)$ for $t = 1,2,\ldots,N$ is nonnegative and monotonically nondecreasing. Let $y(t)$ be a noise-corrupted moving average of $x$ given by
+
+  $$y(t) = \sum_\tau^k h(\tau) x(t - \tau) + v(t) \text{, } t = 2,\ldots,N+1$$
+
+  where $v(t)$ are independent $\mathcal{N}(0,1)$ random variables.
+
+  We can reframe this problem as a linear measurement with IID noise one of the form $y = A x + v$ since a convolution by $h$ can be cast as a matrix multiplication by a matrix $A$ whose rows are shifted entries of $h$ backwards. Recasting the problem this way allows us to solve for the maximum likelihood $x_\text{ml}$ by finding $\text{argmin}_x || Ax - y ||_2^2$.
+
+  A specific instance of this problem for given values of $N, k, h, y$ is solved in ml_estim_incr_signal_data_norng.py
+
+\item[Worst-case probability of loss II]
+  Solved in previous homework but officially present in this one with added request of a contour plot available in contour.R
+\end{itemize}
+\end{document}
