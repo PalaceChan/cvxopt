@@ -1,0 +1,72 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 8}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[Three-way linear classification]
+  Here we are given 20 points $x_i$, 20 points $y_i$, and 20 points $z_i$ and seek to discriminate between them linearly. In the standard linear discrimination problem with two classes of points we can solve the following linear program:
+
+  $$\text{minimize } 1^T u + 1^T v$$
+  $$\text{subject to } a^T x_i - b \geq 1 - u_i, a^T y_j - b \leq -(1 - v_j), u \succeq 0, v \succeq 0$$
+
+  where the positive variables $u$ and $v$ are used to relax the separability constraint and the objective seeks to make the violations sparse.
+
+  For the 3-way problem we can adopt an identical approach, except we need a third relaxation variable and the constraints depend on each other.
+
+  the code for this is in sep3way.py and it gives us the following three affine functions:
+
+  $$f_1(x) = [0.28329478, 0.16652294] \cdot z - 0.4585765$$
+  $$f_2(x) = [-0.20192124, 0.18983291] \cdot z + 0.00016082$$
+  $$f_3(x) = [-0.10444152, -0.30423805] \cdot z - 0.58926234$$
+  
+\item[Fitting a sphere to data]
+  Given $m$ points $u_i \in \mathbb{R}^n$ here we consider the problem of fitting a sphere $\{x \in \mathbb{R}^2 | ||x - x_c|| = r\}$ by minimizing
+
+  $$\sum_{i=1}^m \left(||u_i - x_c ||_2^2 - r^2\right)^2$$
+
+  over $x_c, r$
+  
+
+\item[Learning a quadratic pseudo-metric from distance measurements]
+  We are given $N$ pairs of points in $\mathbb{R}^n$, $x_1, \ldots, x_N$ and $y_1, \ldots, y_N$ together with the pairwise distances $d_1, \ldots, d_N$ (all positive). Goal is to estimate a quadratic pseudo-metric $d$,
+
+  $$d(x,y) = \left( (x-y)^T P (x-y) \right)^{1/2}$$
+  with $P \in \textbf{S}_+^n$ which approximates the given distances, i.e., $d(x_i, y_i) \approx d_i$.
+
+  we can do this by minimizing the mean squared error
+
+  $$\frac{1}{N} \sum_{i=1}^N (d_i - d(x_i, y_i))^2$$
+
+  expanding (and dropping the constant) we can rewrite the above objective as
+
+  $$\sum d_i^2 - 2d_i \left( (x_i-y_i)^T P (x_i-y_i) \right)^{1/2} + (x_i-y_i)^T P (x_i-y_i)$$
+
+  which is convex in $P$ because the first term is constant, the third term is linear (in $P$), and the middle term is convex because it is the negative of a concave function composed with a linear function.
+
+  A specific instance is solved in quad_metric.py 
+  
+\item[Maximum volume rectangle inside a polyhedron]
+  We want to find the maximum volume rectangle $\{x | l \preceq x \preceq u\}$ inside a given polyhedron $\{x | Ax \preceq b\}$
+
+  The volume of this rectangle would simply be the product of all the widths, i.e.
+
+  $$V(l, u) = \prod u_i - l_i $$
+  As constraints we have that every corner of the rectangle must be within the polyhedron, i.e.
+
+  $$A c_k \preceq b$$
+
+  where $c_k = \{ (l_0, l_1, \ldots, l_n), \ldots, (u_0, u_1, \ldots, u_n) \}$ is each of the $2^n$ corners. This is an exponential number of constraints.
+  We can do much better by noting that in order for the rectangle to be inside the polyhedron, it suffices for only the closest corner to each of the $a_i^T x \leq b$ halfplanes to be on the correct side of the hyperplane. The corner closest to a given halfplan can be found from the element-wise $\text{sgn}(-a_i)$. If an entry is positive, the corresponding corner at that coordinate which is closer is $l_i$, if it is negative it would be $u_i$ and if it is zero then either suffices.
+
+  A specific instance is solved using this strategy in max_vol_box.py
+  
+\end{itemize}
+\end{document}
