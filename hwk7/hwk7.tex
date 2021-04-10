@@ -33,7 +33,17 @@
   $$\sum_{i=1}^m \left(||u_i - x_c ||_2^2 - r^2\right)^2$$
 
   over $x_c, r$
-  
+
+  The objective as specified is not quasiconvex. However, we can solve this in two parts. First, we can solve a quasiconvex problem to figure out the center that such a sphere would have. Second, we can solve the original objective problem once the center is known as it then becomes convex.
+
+  To solve, for the center, we look for the sphere of minimum radius containing all the points. Namely we solve
+
+  $$\min(r)$$
+  $$\text{ s.t. } \frac{||u_i - x_c||}{r} <= 1 \text{  } \forall i, \text{ and } r > 0$$
+
+  where the constraints are quasiconvex as $r > 0$. Once this gives us the value for $x_c$ we can substitute it back in the original problem and solve it as a standard convex problem.
+
+  This is demonstrated in the case $n=2$ in sphere_fit.py with plotting code in sphere_fit.R
 
 \item[Learning a quadratic pseudo-metric from distance measurements]
   We are given $N$ pairs of points in $\mathbb{R}^n$, $x_1, \ldots, x_N$ and $y_1, \ldots, y_N$ together with the pairwise distances $d_1, \ldots, d_N$ (all positive). Goal is to estimate a quadratic pseudo-metric $d$,
