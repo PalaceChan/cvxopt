@@ -1,0 +1,146 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,graphicx,psfrag,amsmath,amsfonts,verbatim}
+\usepackage[small,bf]{caption}
+
+\title{\LaTeX\ Chapter 9}
+\author{Palace Chan}
+
+\begin{document}
+\maketitle
+\newpage
+
+\begin{itemize}
+
+\item[Gradient and Newton methods]
+  The problem of computing the analytic center of the set of linear inequalities
+
+  $$a_i^T x \leq 1 \text{,    } i = 1,\ldots,m \text{  and  } |x_i| \leq 1 \text{,    } i = 1,\ldots,n$$
+
+  consists of minimizing:
+
+  $$f(x) = - \sum_{i=1}^m \log (1 - a_i^T x) - \sum_{i=1}^n \log (1 - x_i^2)$$
+
+  \begin{itemize}
+  \item[a]
+    We first use the gradient method to solve this problem iteratively (with stopping criterion $|| \nabla f(x) ||_2 \leq \eta$)
+
+    from the chain rule
+    
+    $$\nabla \left(-\sum_{i=1}^m \log (1 - a_i^T x)\right) = A^T \left[ \frac{1}{1-a_i^T x} \right]$$
+    $$\nabla \left(-\sum_{i=1}^n \log (1 - x_i^2)\right) = \left[ \frac{2 x_i}{1 - x_i^2} \right]$$
+
+    so
+
+    $$\nabla f(x) = A^T \left[ \frac{1}{1-a_i^T x} \right] + \left[ \frac{2 x_i}{1 - x_i^2} \right]$$
+
+    in grad_newt.R, an exhibit of randomly generated problems are solved with various parameters.
+    The exact solution for a randomly generated problem is found with cvx in grad_newt.py
+
+  \item[b]
+    Next we repeat this with Newton's method, in this case the desired step is no longer $\Delta x = - \nabla f(x)$ but is now $-\nabla^2 f(x)^{-1} \nabla f(x)$ (the minimum of the second-order taylor approximation of $f$ at $x$). Since
+
+    $$\nabla^2 \left(-\sum_{i=1}^m \log (1 - a_i^T x)\right) = A^T \left( \sum_{i=1}^m \frac{1}{(1-a_i^Tx)^2} \right) A$$
+
+    $$\nabla^2 \left(-\sum_{i=1}^n \log (1 - x_i^2)\right) = \text{diag} \left( \frac{2 (x_i^2 + 1)}{(1 - x_i^2)^2} \right)$$
+
+    We have that
+
+    $$\nabla^2 f(x) = A^T \left( \sum_{i=1}^m \frac{1}{(1-a_i^Tx)^2} \right) A + \text{diag} \left( \frac{2 (x_i^2 + 1)}{(1 - x_i^2)^2} \right)$$
+
+    TODO newton method is not doing as well debug...
+  \end{itemize}
+
+\item[Efficient solution of basic portfolio optimization problem]
+  Consider the portfolio optimization problem
+
+  $$\text{maximize    } \mu^T w - (\lambda / 2) w^T \Sigma w$$
+  $$\text{subject to  } \textbf{1}^T w = 1$$
+
+  We assume $\lambda = 1$ (we can absorb it into $\Sigma$) and reframe it as a minimization problem by flipping signs in the objective.
+
+  The KKT optimality conditions are
+
+  $$\textbf{1}^T w^* = 1, \Sigma w^* - \mu + v^* = 0$$
+
+  which correspond to the system of $n + 1$ linear equations
+
+  $$\begin{bmatrix}
+    \Sigma & \textbf{1} \\
+    \textbf{1}^T & 0
+  \end{bmatrix} \begin{bmatrix}
+    w^* \\
+    v^*
+    \end{bmatrix} = \begin{bmatrix}
+    \mu \\
+    1
+    \end{bmatrix}$$
+
+    which would be $O(n)^3$. A more efficient system can arise from exploiting the structure of $\Sigma = FQF^T + D$.
+
+    The KKT condition with $\Sigma$ becomes $FQF^T w^* + Dw^* + v^* = -\mu$. which means $w^* = -D^{-1} \left(FQF^Tw^* + v^* + \mu \right)$. If we substitute $y = F^T w^*$ ($k$ factor exposures) we have $w^* = -D^{-1} \left(FQy + v^* + \mu \right)$. Substituting this expression for $w^*$ back into the definition of $y$ gives us this system of $k$ linear equations
+
+    $$\left(I + F^T D^{-1}FQ \right) y = -F^T D^{-1} (v^* + u)$$
+
+    TODO issue is v*...
+    if we solve this for $y$, we can then solve for $w^*$ from another system of $k$ linear equations
+
+    $$\begin{bmatrix} F^T \\ 1^T \end{bmatrix} w^* = \begin{bmatrix} y \\ 1 \end{bmatrix}$$
+
+    and our complexity would be reduced to $O(n)$. Both approaches are explored in port_optim.py
+    
+\item[Sizing a gravity feed water supply network]
+
+  TODO
+
+\item[Flux balance analysis in systems biology]
+  In flux balanace analysis we have a transition matrix for the production and consumption of 6 metabolites due to 9 reactions. This transition matrix $S$ is called the stoichiometric matrix and $S_{ij}$ is the rate of production of $M_i$ due to unit reaction rate $v_j = 1$.
+
+  We have conservation of of metabolites $Sv = 0$, $v \succeq 0$ and $v \preceq v^\text{max}$. The final reaction corresponds to cell growth, maximizing it would yield the maximum possible growth rate. Using the data provided, this is carried out in fba_data.py for a maxium cell growth $G^*$ of $13.55$.
+
+  The remainder of the questions can be answered by resolving the problem under various parametrizations or inspecting the duals in the constraints as shown in fba_data.py
+
+
+\item[Online advertising displays]
+  We consider $n$ ads, $m$ contracts, and $T$ time periods. We have a revenue matrix $R \in \mathbb{R}^{n \times T}$, a total number of ad impressions per period which take place $I \in \mathbb{R}^T$, and we seek to find an optimal impression matrix $N \in \mathbb{R}^{n \times T}$ of impressions per ad per period we should obtain.
+
+  We are subject to $m$ contracts each covering a subset of the ads $\mathcal{A}_j \subset \{1, \ldots, n\}$ and a subset of the time periods $\mathcal{T}_j \subset \{1,\ldots,T\}$ over which those ads have minimum impression count targets (available in $q \in \mathbb{R}^m$). Each contract specifies a penalty rate (available in $p \in \mathbb{R}^m$) for falling short on the target. For a given contract $j$ the shortfall is calculated as
+
+  $$s_j = \left(q_j - \sum_{t \in \mathcal{T}_j} \sum _{i \in \mathcal{A}_j} N_{it} \right)_+$$
+
+  where
+  
+  $$A_{ij}^\text{contr} = \begin{cases}
+    1 & i \in \mathcal{A}_j \\
+    0 & \text{otherwise}
+  \end{cases}$$
+
+  and
+
+  $$T_{ij}^\text{contr} = \begin{cases}
+    1 & t \in \mathcal{T}_j \\
+    0 & \text{otherwise}
+  \end{cases}$$
+
+  We can express the profit function $p(N)$ as a revenue minus cost component as follows:
+
+  $$p(N) = \text{tr}(R^T N) - p^T \left(q - \text{diag}(A_\text{contr}^T N T_\text{contr}) \right)_+$$
+
+  where our contraints are $N \succeq 0$ and $\textbf{1}^T N = I$ which is a convex problem.
+
+  An instance of this problem is worked out in ad_disp.py
+
+\item[Ranking by aggregating preferences]
+  We have $n$ objects and $m$ preferences (ordered pairs $(i,j)$ meaning object $i$ is preferred over object $j$). We want to find a ranking $r \in \mathbb{R}^n$ of the objects as consistent as possible with the given preferences. A peference violation is given by
+
+  $$v = (r_j + 1 - r_i)_+$$
+
+  so we can minimize a loss given by
+
+  $$J = \sum_{k=1}^m \phi ( v^{(k)} )$$
+
+  where $\phi$ is a nondecreasing convex penalty function. Analogous to the effects observed in with L1 and L2 penalization, if we choose $\phi(u) = u_+$ vs $\phi(u) = u^2$ we respectively obtain many more consistent preferences (but a few larger violations) and no large violations but more small violations (i.e. sparsity vs not in the number of violations)
+
+  This is worked out and exhibited in rank_aggr.py and rank_aggr.R
+  
+\end{itemize}
+\end{document}
