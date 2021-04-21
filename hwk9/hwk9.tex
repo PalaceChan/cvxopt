@@ -39,15 +39,15 @@
   \item[b]
     Next we repeat this with Newton's method, in this case the desired step is no longer $\Delta x = - \nabla f(x)$ but is now $-\nabla^2 f(x)^{-1} \nabla f(x)$ (the minimum of the second-order taylor approximation of $f$ at $x$). Since
 
-    $$\nabla^2 \left(-\sum_{i=1}^m \log (1 - a_i^T x)\right) = A^T \left( \sum_{i=1}^m \frac{1}{(1-a_i^Tx)^2} \right) A$$
+    $$\nabla^2 \left(-\sum_{i=1}^m \log (1 - a_i^T x)\right) = A^T \text{diag} \left( \frac{1}{(-Ax + 1)^2} \right) A$$
 
     $$\nabla^2 \left(-\sum_{i=1}^n \log (1 - x_i^2)\right) = \text{diag} \left( \frac{2 (x_i^2 + 1)}{(1 - x_i^2)^2} \right)$$
 
     We have that
 
-    $$\nabla^2 f(x) = A^T \left( \sum_{i=1}^m \frac{1}{(1-a_i^Tx)^2} \right) A + \text{diag} \left( \frac{2 (x_i^2 + 1)}{(1 - x_i^2)^2} \right)$$
+    $$\nabla^2 f(x) = A^T \text{diag} \left( \frac{1}{(-Ax + 1)^2} \right) A + \text{diag} \left( \frac{2 (x_i^2 + 1)}{(1 - x_i^2)^2} \right)$$
 
-    TODO newton method is not doing as well debug...
+    we note in grad_newt.R how the convergence is much faster than with the simple gradient step
   \end{itemize}
 
 \item[Efficient solution of basic portfolio optimization problem]
